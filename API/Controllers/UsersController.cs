@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using System.Net.Mime;
 using System.Linq;
 using AutoMapper;
@@ -30,9 +32,9 @@ namespace API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {            
-            List<User> users = _context.Users.ToList();
+            List<User> users = await _context.Users.ToListAsync();
             if (!users.Any())
                 return NotFound();
 
@@ -43,13 +45,11 @@ namespace API.Controllers
         [HttpGet("{id}", Name = "GetById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
             User user = null;
 
-            user = _context.Users.FirstOrDefault(c => c.Id == id);
-            //if (user is null)
-            //    throw new System.Exception("not found!");            
+            user = await _context.Users.FirstOrDefaultAsync(c => c.Id == id);         
             if (user is null)
                 return NotFound();
 
@@ -60,11 +60,16 @@ namespace API.Controllers
         //POST api/users
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public IActionResult Create([FromBody] UserCreateDto userCreateDto)
+        public async Task<IActionResult> Create([FromBody] UserCreateDto userCreateDto)
         {
             User user = _mapper.Map<User>(userCreateDto);
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            Genre genre = await _context.Genres.FindAsync(userCreateDto.GenreId);
+            if (genre is null)
+                return BadRequest("Genre is not valid");
+
+            user.SetGenre(genre);
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
 
             var userDto = _mapper.Map<UserReadDto>(user);
 
@@ -75,16 +80,21 @@ namespace API.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Update(int id, [FromBody] UserUpdateDto userUpdateDto)
+        public async Task<IActionResult> Update(int id, [FromBody] UserUpdateDto userUpdateDto)
         {            
-            User user = _context.Users.Find(id);
+            User user = await _context.Users.FindAsync(id);
             if (user is null)
                 return NotFound();
 
+            Genre genre = await _context.Genres.FindAsync(userUpdateDto.GenreId);
+            if (genre is null)
+                return BadRequest("Genre is not valid");
+
             _mapper.Map(userUpdateDto, user);
 
-            _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.SaveChanges();
+            user.SetGenre(genre);
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -93,9 +103,9 @@ namespace API.Controllers
         [HttpPatch("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult PartialUpdate(int id, JsonPatchDocument<UserUpdateDto> patchUserDto)
+        public async Task<ActionResult> PartialUpdate(int id, JsonPatchDocument<UserUpdateDto> patchUserDto)
         {
-            User user = _context.Users.Find(id);
+            User user = await _context.Users.FindAsync(id);
             if (user is null)
                 return NotFound();
 
@@ -107,8 +117,8 @@ namespace API.Controllers
 
             _mapper.Map(userToPatch, user);
 
-            _context.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            _context.SaveChanges();
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
@@ -117,14 +127,14 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {            
-            User user = _context.Users.Find(id);
+            User user = await _context.Users.FindAsync(id);
             if (user is null)
                 return NotFound();
 
             _context.Users.Remove(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             
             return NoContent();
         }

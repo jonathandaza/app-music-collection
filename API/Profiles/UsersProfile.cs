@@ -8,10 +8,11 @@ namespace API.Profiles
     {
         public UsersProfile()
         {
-            CreateMap<User, UserReadDto>();
+            CreateMap<User, UserReadDto>()
+                .ForMember(p => p.Genre, opt => opt.MapFrom(src => src.Genre));
             CreateMap<UserCreateDto, User>();
             CreateMap<UserUpdateDto, User>();
             CreateMap<User, UserUpdateDto>();
         }
-    }
+    }    
 }

@@ -17,6 +17,7 @@ namespace API.Models
         {
         }
 
+        public virtual DbSet<Genre> Genres { get; set; }
         public virtual DbSet<PlayListTrack> PlayListTracks { get; set; }
         public virtual DbSet<Playlist> Playlists { get; set; }
         public virtual DbSet<Track> Tracks { get; set; }
@@ -33,6 +34,16 @@ namespace API.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "Modern_Spanish_CI_AS");
+
+            modelBuilder.Entity<Genre>(entity =>
+            {
+                entity.ToTable("Genre");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(30)
+                    .IsUnicode(false);
+            });
 
             modelBuilder.Entity<PlayListTrack>(entity =>
             {
@@ -97,6 +108,12 @@ namespace API.Models
                     .IsRequired()
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.Genre)
+                    .WithMany(p => p.Users)
+                    .HasForeignKey(d => d.IdGenre)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_User_Genre");
             });
 
             OnModelCreatingPartial(modelBuilder);

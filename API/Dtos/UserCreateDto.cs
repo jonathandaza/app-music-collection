@@ -16,6 +16,9 @@ namespace API.Dtos
         [Required]
         [Range(1, 150)]
         public byte Age { get; set; }
+
+        [Required]
+        public byte GenreId { get; set; }
     }
 
 }

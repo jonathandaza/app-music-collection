@@ -46,7 +46,7 @@ namespace API
 
             services.AddDbContext<MusicCollectionContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("MusicCollection"));
+                options.UseSqlServer(Configuration.GetConnectionString("MusicCollection")).UseLazyLoadingProxies();
             });
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
