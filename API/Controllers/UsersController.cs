@@ -75,7 +75,7 @@ namespace API.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Update(int id,[FromBody] UserUpdateDto userUpdateDto)
+        public IActionResult Update(int id, [FromBody] UserUpdateDto userUpdateDto)
         {            
             User user = _context.Users.Find(id);
             if (user is null)

@@ -1,4 +1,6 @@
 
+DATABASE FIRST COMMANDS 
+
 dotnet tool install --global dotnet-ef
 
 -- .NET CLI
@@ -8,3 +10,14 @@ dotnet ef dbcontext scaffold "Server=.\SQLEXPRESS;Initial Catalog=MusicCollectio
 -- Powershell
 Scaffold-DBContext "Server=.\SQLEXPRESS;Database=MusicCollection;Trusted_Connection=True;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 Scaffold-DBContext "Server=.\SQLEXPRESS;Initial Catalog=MusicCollection;User ID=sa;Password=$qlserver2016;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+
+CODEFIRST COMMANDS 
+
+-- Powershell
+Add-Migration Initial
+Update-Database
+
+
+
+Hosting Bundle Installer
+https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-aspnetcore-5.0.6-windows-hosting-bundle-installer
