@@ -1,0 +1,10 @@
+
+dotnet tool install --global dotnet-ef
+
+-- .NET CLI
+dotnet ef dbcontext scaffold "Server=.\SQLEXPRESS;Database=MusicCollection;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models
+dotnet ef dbcontext scaffold "Server=.\SQLEXPRESS;Initial Catalog=MusicCollection;User ID=sa;Password=$qlserver2016;" Microsoft.EntityFrameworkCore.SqlServer -o Models
+
+-- Powershell
+Scaffold-DBContext "Server=.\SQLEXPRESS;Database=MusicCollection;Trusted_Connection=True;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+Scaffold-DBContext "Server=.\SQLEXPRESS;Initial Catalog=MusicCollection;User ID=sa;Password=$qlserver2016;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models

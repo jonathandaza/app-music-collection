@@ -30,9 +30,9 @@ namespace API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get([FromQuery] int count)
+        public IActionResult Get()
         {            
-            List<User> users = _context.Users.Take(count).ToList();
+            List<User> users = _context.Users.ToList();
             if (!users.Any())
                 return NotFound();
 

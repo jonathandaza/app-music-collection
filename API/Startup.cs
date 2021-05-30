@@ -71,7 +71,7 @@ namespace API
 
             app.UseAuthorization();
 
-            app.UseCors();
+            app.UseCors(CORS);
 
             app.UseEndpoints(endpoints =>
             {
