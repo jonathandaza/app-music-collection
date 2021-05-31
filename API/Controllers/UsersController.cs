@@ -8,7 +8,7 @@ using System.Net.Mime;
 using System.Linq;
 using AutoMapper;
 using API.Models;
-using API.Dtos;
+using DTO;
 
 namespace API.Controllers
 {
@@ -42,7 +42,7 @@ namespace API.Controllers
         }
 
         //GET api/users/{id}
-        [HttpGet("{id}", Name = "GetById")]
+        [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)

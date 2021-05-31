@@ -5,3 +5,8 @@
 /.vs/MusicCollection
 /API/bin/Debug/net5.0
 /API/obj
+/API/bin/Release/net5.0
+/DTO/bin
+/DTO/obj
+/UI/bin/Debug/net5.0
+/UI/obj

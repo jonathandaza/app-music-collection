@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using API.Models;
-using API.Dtos;
+using DTO;
 
 namespace API.Profiles
 {

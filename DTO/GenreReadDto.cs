@@ -1,4 +1,4 @@
-﻿namespace API.Dtos
+﻿namespace DTO
 {
     public class GenreReadDto
     {

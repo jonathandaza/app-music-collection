@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System;
 
-namespace API.Dtos
+namespace DTO
 {
-    public class UserUpdateDto
+    public class UserCreateDto
     {
         [Required]
         [MaxLength(50)]
