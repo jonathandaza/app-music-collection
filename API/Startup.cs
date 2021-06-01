@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using API.Models;
 using System;
 using Newtonsoft.Json.Serialization;
+using API.Repositories;
 
 namespace API
 {
@@ -44,10 +45,13 @@ namespace API
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
 
-            services.AddDbContext<MusicCollectionContext>(options =>
+            services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("MusicCollection")).UseLazyLoadingProxies();
+                options.UseSqlServer(Configuration.GetConnectionString("DBConnection")).UseLazyLoadingProxies();
             });
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }

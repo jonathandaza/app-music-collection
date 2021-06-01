@@ -1,11 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using API.Repositories;
 using System.Net.Mime;
 using System.Linq;
-using API.Models;
 using AutoMapper;
 using DTO;
 
@@ -17,13 +16,13 @@ namespace API.Controllers
     [ApiController]
     public class GenresController : ControllerBase
     {
-        private readonly MusicCollectionContext _context;
+        private readonly IGenreRepository _genreRepository;
         private readonly IMapper _mapper;
 
-        public GenresController(MusicCollectionContext musicCollectionContext,
+        public GenresController(IGenreRepository genreRepository,
                                 IMapper mapper)
         {
-            _context = musicCollectionContext;
+            _genreRepository = genreRepository;
             _mapper = mapper;
         }
 
@@ -33,11 +32,11 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get()
         {
-            List<Genre> genres = await _context.Genres.ToListAsync();
-            if (!genres.Any())
+            var result = await _genreRepository.GetAsync();
+            if (!result.Any())
                 return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<GenreReadDto>>(genres));
+            return Ok(_mapper.Map<IEnumerable<GenreReadDto>>(result));
         }
 
         //GET api/genres/{id}
@@ -46,13 +45,11 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
-            Genre genre = null;
-
-            genre = await _context.Genres.FirstOrDefaultAsync(c => c.Id == id);
-            if (genre is null)
+            var result = await _genreRepository.GetAsync(id);
+            if (result is null)
                 return NotFound();
 
-            return Ok(_mapper.Map<GenreReadDto>(genre));
+            return Ok(_mapper.Map<GenreReadDto>(result));
         }
     }
 }

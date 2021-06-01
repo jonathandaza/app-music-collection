@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace API.Models
 {
-    public partial class MusicCollectionContext : DbContext
+    public partial class AppDbContext : DbContext
     {
-        public MusicCollectionContext()
+        public AppDbContext()
         {
         }
 
-        public MusicCollectionContext(DbContextOptions<MusicCollectionContext> options)
+        public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
         {
         }
@@ -111,7 +111,7 @@ namespace API.Models
 
                 entity.HasOne(d => d.Genre)
                     .WithMany(p => p.Users)
-                    .HasForeignKey(d => d.IdGenre)
+                    .HasForeignKey(d => d.GenreId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_User_Genre");
             });

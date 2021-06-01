@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.JsonPatch;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using API.Repositories;
 using System.Net.Mime;
 using System.Linq;
 using AutoMapper;
@@ -18,13 +18,14 @@ namespace API.Controllers
     [ApiController]
     public class UsersController : Controller
     {
-        private readonly MusicCollectionContext _context;
+
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public UsersController(MusicCollectionContext musicCollectionContext,
+        public UsersController(IUserRepository userRepository,
                                IMapper mapper)
         {
-            _context = musicCollectionContext;
+            _userRepository = userRepository;
             _mapper = mapper;
         }
 
@@ -34,11 +35,11 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get()
         {            
-            List<User> users = await _context.Users.ToListAsync();
-            if (!users.Any())
+            var result = await _userRepository.GetAsync();
+            if (!result.Any())
                 return NotFound();
 
-            return Ok(_mapper.Map<IEnumerable<UserReadDto>>(users));
+            return Ok(_mapper.Map<IEnumerable<UserReadDto>>(result));
         }
 
         //GET api/users/{id}
@@ -47,31 +48,23 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(int id)
         {
-            User user = null;
-
-            user = await _context.Users.FirstOrDefaultAsync(c => c.Id == id);         
-            if (user is null)
+            var result = await _userRepository.GetAsync(id);
+            if (result is null)
                 return NotFound();
 
-            return Ok(_mapper.Map<UserReadDto>(user));
+            return Ok(_mapper.Map<UserReadDto>(result));
         }
 
 
         //POST api/users
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Create([FromBody] UserCreateDto userCreateDto)
         {
             User user = _mapper.Map<User>(userCreateDto);
-            Genre genre = await _context.Genres.FindAsync(userCreateDto.GenreId);
-            if (genre is null)
-                return BadRequest("Genre is not valid");
-
-            user.SetGenre(genre);
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
-            var userDto = _mapper.Map<UserReadDto>(user);
+            
+            var userDto = _mapper.Map<UserReadDto>(await _userRepository.AddAsync(user));
 
             return CreatedAtAction(nameof(GetById), new { id = userDto.Id }, userDto);
         }
@@ -81,20 +74,14 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(int id, [FromBody] UserUpdateDto userUpdateDto)
-        {            
-            User user = await _context.Users.FindAsync(id);
+        {
+            User user = await _userRepository.GetAsync(id);
             if (user is null)
-                return NotFound();
+                return NotFound("User was not found");          
 
-            Genre genre = await _context.Genres.FindAsync(userUpdateDto.GenreId);
-            if (genre is null)
-                return BadRequest("Genre is not valid");
-
-            _mapper.Map(userUpdateDto, user);
-
-            user.SetGenre(genre);
-            _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            _mapper.Map(userUpdateDto, user);  
+            
+            await _userRepository.UpdateAsync(user);
 
             return NoContent();
         }
@@ -105,9 +92,9 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult> PartialUpdate(int id, JsonPatchDocument<UserUpdateDto> patchUserDto)
         {
-            User user = await _context.Users.FindAsync(id);
+            User user = await _userRepository.GetAsync(id);
             if (user is null)
-                return NotFound();
+                return NotFound("User was not found");
 
             var userToPatch = _mapper.Map<UserUpdateDto>(user);
             patchUserDto.ApplyTo(userToPatch, ModelState);
@@ -117,8 +104,7 @@ namespace API.Controllers
 
             _mapper.Map(userToPatch, user);
 
-            _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await _userRepository.UpdateAsync(user);
 
             return NoContent();
         }
@@ -128,14 +114,13 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(int id)
-        {            
-            User user = await _context.Users.FindAsync(id);
+        {
+            User user = await _userRepository.GetAsync(id);
             if (user is null)
-                return NotFound();
+                return NotFound("User was not found");
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            
+            await _userRepository.DeleteAsync(id);
+
             return NoContent();
         }
     }   
