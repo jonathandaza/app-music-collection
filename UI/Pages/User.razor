@@ -1,14 +1,12 @@
 ﻿@page "/user"
 @page "/user/{id:int}"
 
-@inject HttpClient Http;
-@inject NavigationManager NavigationManager;
-@inject ILogger<User> Logger
 
+@inherits UserBase
 <EditForm Model=@user OnSubmit=@FormSubmitted>
     <DataAnnotationsValidator />    
     
-    <h3>User</h3>
+    <h3>@PageHeaderText</h3>
 
     <div class="container-fluid">
         <div class="form-group row mb-1">
@@ -54,65 +52,3 @@
     </div>
 
 </EditForm>
-
-@code {
-
-    private readonly string urlUsers = "/api/users";
-    private readonly string urlGenres = "/api/genres";
-
-    [Parameter]
-    public int Id { get; set; }
-
-    public bool IsNew { get { return Id == 0; } }
-
-    UserCreateDto user = new UserCreateDto();
-    List<GenreReadDto> genres = new List<GenreReadDto>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        genres = await Http.GetFromJsonAsync<List<GenreReadDto>>(urlGenres);
-
-        if (!IsNew)
-        {
-            user = await Http.GetFromJsonAsync<UserReadDto>($"{urlUsers}/{Id}");            
-        }
-    }
-
-    async Task FormSubmitted(EditContext editContext)
-    {
-        bool formIsValid = editContext.Validate();
-        if (formIsValid)
-        {
-            await SaveOrEdit();
-        }
-        else
-        {
-            Logger.LogError($"Error validation");
-        }
-    }
-
-    private async Task SaveOrEdit()
-    {
-        HttpResponseMessage response;
-
-        if (IsNew)
-        {
-            response = await Http.PostAsJsonAsync(urlUsers, user);
-        }
-        else
-        {
-            response = await Http.PutAsJsonAsync($"{urlUsers}/{Id}", user);
-        }
-
-        if (!response.IsSuccessStatusCode)
-        {
-            var responseString = await response.Content.ReadAsStringAsync();
-            Logger.LogError($"Error calling server {responseString}");
-        }
-
-        Return();
-    }
-
-    private void Return() => NavigationManager.NavigateTo("/");
-
-}

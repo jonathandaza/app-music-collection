@@ -40,6 +40,16 @@ namespace API.Repositories
             return await _appDbContext.Users.FirstOrDefaultAsync(c => c.Id == id);
         }
 
+        public async Task<User> GetByNameAsync(string name)
+        {
+            return await _appDbContext.Users.FirstOrDefaultAsync(c => c.Name == name);
+        }
+
+        public Task<IEnumerable<User>> SerachAsync(string name, string genre, int? age)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public async Task UpdateAsync(User user)
         {
             _appDbContext.Entry(user).State = EntityState.Modified;

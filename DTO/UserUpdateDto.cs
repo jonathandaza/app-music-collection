@@ -5,13 +5,11 @@ namespace DTO
     public class UserUpdateDto
     {
         [Required]
-        //[MaxLength(50)]
-        [StringLength(50, ErrorMessage = "Name too long (50 character limit).")]
+        [MaxLength(50, ErrorMessage = "Name too long (50 character limit).")]
         public string Name { get; set; }
 
         [Required]
-        //[MaxLength(50)]
-        [StringLength(50, ErrorMessage = "Name too long (50 character limit).")]
+        [MaxLength(50, ErrorMessage = "Name too long (50 character limit).")]
         public string LastName { get; set; }
 
         [Required]

@@ -29,6 +29,21 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
+        //GET api/users/search?name=jhon
+        //GET api/users/search?name=jhon&genre=male
+        //GET api/users/search?name=jhon&genre=male&age=10
+        [HttpGet("search")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Get(string name, string genre, int? age)
+        {
+            var result = await _userRepository.SerachAsync(name, genre, age);
+            if (!result.Any())
+                return NotFound();
+
+            return Ok(_mapper.Map<IEnumerable<UserReadDto>>(result));
+        }
+
         //GET api/users      
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -73,11 +88,19 @@ namespace API.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(int id, [FromBody] UserUpdateDto userUpdateDto)
         {
             User user = await _userRepository.GetAsync(id);
             if (user is null)
-                return NotFound("User was not found");          
+                return NotFound("User was not found");
+
+            var userNameAlreadyUsed = await _userRepository.GetByNameAsync(userUpdateDto.Name);
+            if (userNameAlreadyUsed.Id != user.Id)
+            {
+                ModelState.AddModelError("name", "user name already in use");
+                return BadRequest();
+            }
 
             _mapper.Map(userUpdateDto, user);  
             

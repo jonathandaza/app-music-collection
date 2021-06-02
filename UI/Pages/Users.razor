@@ -1,6 +1,6 @@
 ﻿@page "/"
 
-@inject HttpClient Http;
+@inherits UsersBase
 
 <h3>Users</h3>
 <div class="row">
@@ -49,17 +49,4 @@ else
             }
         </tbody>
     </table>
-}
-
-
-@code {
-
-    private readonly string urlUsers = "/api/users";    
-
-    public List<UserReadDto> users = new List<UserReadDto>();    
-
-    protected override async Task OnInitializedAsync()
-    {
-        users = await Http.GetFromJsonAsync<List<UserReadDto>>(urlUsers);        
-    }
 }

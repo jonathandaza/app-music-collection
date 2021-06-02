@@ -4,16 +4,24 @@ namespace DTO
 {
     public class UserCreateDto
     {
+        public UserCreateDto()
+        { }
+        public UserCreateDto(byte age, byte genreId)
+        {
+            Age = age;
+            GenreId = genreId;
+        }
+
         [Required]
-        [MaxLength(50)]
+        [MaxLength(50, ErrorMessage = "Name too long (50 character limit).")]
         public string Name { get; set; }
 
         [Required]
-        [MaxLength(50)]
+        [MaxLength(50, ErrorMessage = "Name too long (50 character limit).")]
         public string LastName { get; set; }
 
         [Required]
-        [Range(1, 150)]
+        [Range(1, 150, ErrorMessage = "Age must be between 1 and 150.")]
         public byte Age { get; set; }
 
         [Required]

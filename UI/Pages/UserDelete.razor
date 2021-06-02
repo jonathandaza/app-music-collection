@@ -1,36 +1,11 @@
 ﻿@page "/userDelete/{Id:int}"
 
-@inject HttpClient Http;
-@inject ILogger<UserDelete> Logger
-@inject NavigationManager NavigationManager;
+@inherits UserDeleteBase
 
-<p>Would you want to delete?</p>
+<h3>Delete User</h3>
+<hr />
+<p>Would you want to delete it?</p>
 <div>    
     <button class="btn btn-outline-primary" @onclick="Return">Cancel</button>
     <button class="btn btn-primary" @onclick="Delete">Delete</button>
 </div>
-
-@code {
-    [Parameter]
-    public int Id { get; set; }
-
-    private readonly string url = "/api/users";
-
-    private async Task Delete()
-    {
-        HttpResponseMessage response;
-        response = await Http.DeleteAsync($"{url}/{Id}");
-
-        if (!response.IsSuccessStatusCode)
-        {
-            var responseString = await response.Content.ReadAsStringAsync();
-            Logger.LogError($"Error calling server {responseString}");
-        }
-
-        Return();
-    }
-
-    private void Return() =>
-        NavigationManager.NavigateTo("/");
-
-}

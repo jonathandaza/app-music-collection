@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using System.Net.Http;
 using System;
+using UI.Services;
 
 namespace UI
 {
@@ -23,7 +24,10 @@ namespace UI
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            //services.AddSingleton<WeatherForecastService>();
+
+            services.AddSingleton<IUserService, UserService>();
+            services.AddSingleton<IGenreService, GenreService>();
+            
 
             services.AddSingleton(new HttpClient()
             {                
