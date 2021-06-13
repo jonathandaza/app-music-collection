@@ -7,9 +7,13 @@ dotnet tool install --global dotnet-ef
 dotnet ef dbcontext scaffold "Server=.\SQLEXPRESS;Database=MusicCollection;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -o Models
 dotnet ef dbcontext scaffold "Server=.\SQLEXPRESS;Initial Catalog=MusicCollection;User ID=sa;Password=$qlserver2016;" Microsoft.EntityFrameworkCore.SqlServer -o Models
 
+dotnet ef dbcontext scaffold "Server=.\SQLEXPRESS;Initial Catalog=MusicCollection;User ID=sa;Password=$qlserver2016;" Microsoft.EntityFrameworkCore.SqlServer -o Models -force
+
 -- Powershell
 Scaffold-DBContext "Server=.\SQLEXPRESS;Database=MusicCollection;Trusted_Connection=True;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
 Scaffold-DBContext "Server=.\SQLEXPRESS;Initial Catalog=MusicCollection;User ID=sa;Password=$qlserver2016;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
+
+Scaffold-DBContext "Server=.\SQLEXPRESS;Initial Catalog=MusicCollection;User ID=sa;Password=$qlserver2016;"Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force
 
 CODEFIRST COMMANDS 
 
@@ -21,3 +25,5 @@ Update-Database
 
 Hosting Bundle Installer
 https://dotnet.microsoft.com/download/dotnet/thank-you/runtime-aspnetcore-5.0.6-windows-hosting-bundle-installer
+
+dotnet restore

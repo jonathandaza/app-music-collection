@@ -6,7 +6,7 @@ namespace API.Repositories
 {
     public interface IUserRepository
     {
-        Task<IEnumerable<User>> SerachAsync(string name, string genre, int? age);
+        Task<IEnumerable<User>> SearchAsync(string name, string genre, int? age);
         Task<IEnumerable<User>> GetAsync();
         Task<User> GetAsync(int id);
         Task<User> GetByNameAsync(string name);

@@ -37,7 +37,7 @@ namespace API.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Get(string name, string genre, int? age)
         {
-            var result = await _userRepository.SerachAsync(name, genre, age);
+            var result = await _userRepository.SearchAsync(name, genre, age);
             if (!result.Any())
                 return NotFound();
 

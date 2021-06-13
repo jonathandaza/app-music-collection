@@ -32,20 +32,27 @@ namespace API.Repositories
 
         public async Task<IEnumerable<User>> GetAsync()
         {
-            return await _appDbContext.Users.ToListAsync();
+            return await _appDbContext.Users
+                .Include(c => c.Genre)
+                .ToListAsync();
         }
 
         public async Task<User> GetAsync(int id)
         {
-            return await _appDbContext.Users.FirstOrDefaultAsync(c => c.Id == id);
+            return await _appDbContext.Users
+                .Include(c => c.Genre)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<User> GetByNameAsync(string name)
         {
-            return await _appDbContext.Users.FirstOrDefaultAsync(c => c.Name == name);
+            return await _appDbContext.Users
+                .Include(c => c.Genre)
+                //.ThenInclude(c => c.Department)
+                .FirstOrDefaultAsync(c => c.Name == name);
         }
 
-        public Task<IEnumerable<User>> SerachAsync(string name, string genre, int? age)
+        public Task<IEnumerable<User>> SearchAsync(string name, string genre, int? age)
         {
             throw new System.NotImplementedException();
         }

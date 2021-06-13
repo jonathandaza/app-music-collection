@@ -1,14 +1,14 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using API.Repositories;
 using API.Models;
 using System;
-using Newtonsoft.Json.Serialization;
-using API.Repositories;
 
 namespace API
 {
@@ -47,7 +47,7 @@ namespace API
 
             services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DBConnection")).UseLazyLoadingProxies();
+                options.UseSqlServer(Configuration.GetConnectionString("DBConnection"));//.UseLazyLoadingProxies();
             });
 
             services.AddScoped<IUserRepository, UserRepository>();
